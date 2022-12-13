@@ -1,1 +1,32 @@
-﻿
+﻿.title {
+    color: antiquewhite;
+    text-align: center;
+    font-family: fantasy;
+    font-size: 400%;
+}
+
+body {
+    background-color: rgb(41, 41, 41);
+}
+
+.letter{
+    width: 40px;
+    height: 40px;
+    margin-left: 5px;
+    position: relative;
+    background-color: white;
+    color: black;
+    display: inline-block;
+    
+}
+.letterChild{
+    position: absolute;
+    font-family: fantasy;
+    margin-top: 9px;
+    margin-left: 14px;
+    font-size: 120%;
+}
+#map{
+    position: absolute;
+    align-content: center;
+}
