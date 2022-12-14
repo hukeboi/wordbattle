@@ -43,8 +43,30 @@ body {
     display: flex;
     justify-content: center;
 }
-.word{
+.underBoard {
+    position: relative;
+    width: 100%;
+    left: 0;
     text-align: center;
+    display: inherit;
+    position: relative;
+    height: 50px;
+ }
+
+.word{
     font-family: Arial;
     color: white;
+    position: relative;
+    vertical-align: middle;
+    text-align: center;
+    display: inline-block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    
+}
+#sendBtn{
+    position: absolute;
+    display: inline-block;
+    left: 60.3%;
+    margin-top: -50px;
 }

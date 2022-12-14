@@ -16,17 +16,17 @@ def main():
 
 allLetters = "ABDEFGHIJKLMNOPRSTUVYÄÖ"
 weights = (
-    17, #A
+    19, #A
     5,  #B
     5,  #D
-    17, #E
+    18, #E
     6,  #F
-    10,  #G
+    8,  #G
     17,  #H
     20,  #I
     19,  #J
     19,  #K
-    19,  #L
+    18,  #L
     19,  #M
     19,  #N
     19,  #O
@@ -54,6 +54,10 @@ def returnNewGrid():
 playersInServer = 0
 playerSecrets = []
 map = {}
+currentTurn = 1
+playerHasVoted = [False, False] #index 0 indicates if player voted, index 1 indicates the value of the vote
+currentWord = ""
+currentWordData = []
 
 @app.route('/getserverstatus', methods=['GET'])
 @cross_origin()
@@ -96,7 +100,82 @@ def getGameData():
 @cross_origin()
 def ping():
     return jsonify({"result": "1"})
-  
+
+@app.route('/postword', methods=['POST'])
+@cross_origin()
+def postword():
+    global playerHasVoted
+    global currentWord
+    global currentTurn
+    global currentWordData
+    if (request.headers['player'] != str(currentTurn)):
+        return jsonify({"result":"-1", "error":"An internal error occured"})
+    if request.headers['player'] == "1" and request.headers['secret'] == playerSecrets[0]:
+        currentWord = request.json['word']
+        currentWordData = request.json['worddata']
+        while playerHasVoted[0] == False:
+            time.sleep(0.1)
+        playerHasVoted[0] = False
+        if currentTurn == 1: currentTurn = 2 
+        else: currentTurn = 1
+        return jsonify({"result":"0"})
+    elif request.headers['player'] == "2" and request.headers['secret'] == playerSecrets[1]:
+        currentWord = request.json['word']
+        currentWordData = request.json['worddata']
+        while playerHasVoted[0] == False:
+            time.sleep(0.1)
+        playerHasVoted[0] = False
+        if currentTurn == 1: currentTurn = 2 
+        else: currentTurn = 1
+        return jsonify({"result":"0"})
+    else:
+        return jsonify({"result" : "-1", "error":"Invalid player secret."})
+
+@app.route('/getnewword', methods=['GET'])
+@cross_origin()
+def getnewword():
+    global currentWord
+    if (request.headers['player'] == str(currentTurn)):
+        return jsonify({"result":"-1", "error":"An internal error occured"})
+    if request.headers['player'] == "1" and request.headers['secret'] == playerSecrets[0]:
+        while currentWord == "":
+            time.sleep(0.1)
+        word = currentWord
+        currentWord = ""
+        return jsonify({"result":"0", "word": word, "data":currentWordData})
+    elif request.headers['player'] == "2" and request.headers['secret'] == playerSecrets[1]:
+        while currentWord == "":
+            time.sleep(0.1)
+        word = currentWord
+        currentWord = ""
+        return jsonify({"result":"0", "word": word, "data":currentWordData})
+    else:
+        return jsonify({"result" : "-1", "error":"Invalid player secret."})
+
+@app.route('/approveword', methods=['POST'])
+@cross_origin()
+def approveword():
+    global playerHasVoted
+    if (request.headers['player'] == str(currentTurn)):
+        return jsonify({"result":"-1", "error":"An internal error occured"})
+    if request.headers['player'] == "1" and request.headers['secret'] == playerSecrets[0]:
+        if request.json['result'] == "true":
+            playerHasVoted[1] = True
+        else:
+            playerHasVoted[1] = False
+        playerHasVoted[0] = True
+        return jsonify({"result":"0"})
+    elif request.headers['player'] == "2" and request.headers['secret'] == playerSecrets[1]:
+        if request.json['result'] == "true":
+            playerHasVoted[1] = True
+        else:
+            playerHasVoted[1] = False
+        playerHasVoted[0] = True
+        return jsonify({"result":"0"})
+    else:
+        return jsonify({"result" : "-1", "error":"Invalid player secret."})
+    
+
 def run():
     app.run(host="0.0.0.0", port=8080, threaded=True)
 
@@ -107,3 +186,5 @@ def keep_alive():
 
 
 keep_alive()
+
+print("SERVER STARTED")
