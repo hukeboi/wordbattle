@@ -21,6 +21,9 @@ body {
 .letter:hover{
     background-color: rgb(211, 211, 211);
 }
+.letter.noturn:hover{
+    background-color: white;
+}
 .letterChild{
     font-family: fantasy;
     margin-top: 9px;

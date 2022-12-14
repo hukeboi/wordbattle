@@ -22,6 +22,7 @@ let selectedTiles = [];
 let word = "";
 const selectedColor = "rgb(209, 63, 52)";
 const UNselectedColor = "white";
+let IsMyTurn = false;
 
 //0 = not a valid move, 1 = valid move, 2 = remove tile
 function IsValid(allBoxes, row, col){
@@ -50,9 +51,11 @@ function IsValid(allBoxes, row, col){
 function RemoveFromArray(arr1, arr2){
     let retVal = [];
     if (arr2.length === 1){
+        arr2 = arr2[0];
         for (let i = 0; i < arr1.length; i++){
+            console.log(JSON.stringify(arr1[i]), JSON.stringify(arr2))
             if (JSON.stringify(arr1[i]) !== JSON.stringify(arr2)){
-                retVal.push(arr1[i])
+                retVal.push(arr1[i]);
             }
         }
         return retVal;
@@ -71,7 +74,24 @@ function RemoveFromArray(arr1, arr2){
     return retVal;
 }
 
+function ToggleAllTiles(on){
+    for (let x = 1; x <= 13; x++){
+        for (let y = 1; y <= 10; y++){
+            console.log(x, y)
+            if (on){
+                document.getElementById(x + ":" + y).classList.remove("noturn");
+            } else {
+                document.getElementById(x + ":" + y).classList.add("noturn");
+            }
+            
+        }
+    }
+}
+
 async function main(){
+    document.getElementById("placeholderMap").style.display = "none";
+    document.getElementById("sendBtn").style.display = "block";
+
     let ping = await fetch(url + "/ping")
     if (ping.status !== 200){
         alert("Failed to connect to server")
@@ -83,6 +103,13 @@ async function main(){
         alert(startData.error)
         return
     }
+    if (startData.player === "1"){
+        IsMyTurn = true;
+    } else {
+        IsMyTurn = false; 
+    }
+
+    console.log(startData.player)
     const headers = {'secret': startData.secret}
     const gameData = await fetchAsync(url + "/getgamedata", headers);
     if (gameData.result === "-1") {
@@ -102,7 +129,12 @@ async function main(){
             parent.appendChild(letterDiv)
             letterDiv.id = parseInt(key) + ":" + parseInt(col)
             letterDiv.addEventListener("click", (click) => {
+                if (IsMyTurn === false) {return;}
                 if (IsValid(selectedTiles, parseInt(key), parseInt(col)) === 1){
+                    if (selectedTiles.length >= 8) {
+                        alert("You cant have more than 8 letters.");
+                        return;
+                    }
                     letterDiv.style.backgroundColor = selectedColor;
                     selectedTiles.push([parseInt(key), parseInt(col)]);
                     word = word + letterChild.innerText;
@@ -121,9 +153,6 @@ async function main(){
                             break;
                         }
                     }
-                    if (toRemove.length === 1) {
-                        console.log("ok")
-                    }
                     selectedTiles = RemoveFromArray(selectedTiles, toRemove)
                     document.getElementsByClassName("word")[0].innerText = word;
                 }
@@ -133,7 +162,9 @@ async function main(){
         }
         document.getElementById("map").appendChild(parent);
     }
-    console.log(JSON.stringify(gameData.data))
+    if (IsMyTurn === false){
+        ToggleAllTiles(IsMyTurn);
+    }
 }
-
+document.getElementById("sendBtn").style.display = "none";
 main().catch(console.log);
