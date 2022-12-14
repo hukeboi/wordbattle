@@ -18,22 +18,36 @@ function compare( a, b ) {
 }
   
 const url = "https://word-battle-server.hugestudios.repl.co";
-let selectedTiles = []
+let selectedTiles = [];
+let word = "";
+const selectedColor = "rgb(209, 63, 52)";
+const UNselectedColor = "white";
 
-
+//0 = not a valid move, 1 = valid move, 2 = remove tile
 function IsValid(allBoxes, row, col){
     if (allBoxes.length === 0){
         if (row === 1){
-            return true;
-        } else {return false;}
+            return 1;
+        } else {return 0;}
     }
+
+    if (JSON.stringify(allBoxes[allBoxes.length - 2]) === JSON.stringify([row, col])){
+        return 2;
+    }
+
+    for (let i = 0; i < allBoxes.length; i++){
+        if (JSON.stringify(allBoxes[i]) === JSON.stringify([row, col])){
+            return 0;
+        }
+    }
+
     let lastTile = allBoxes[allBoxes.length - 1];
     if (Math.abs(lastTile[0] - row) === 1 || Math.abs(lastTile[0] - row) === 0 ){
         if (Math.abs(lastTile[1] - col) === 1 || Math.abs(lastTile[1] - col) === 0 ){
-            return true;
+            return 1;
         }
     }
-    return false;
+    return 0;
 }
 
 async function main(){
@@ -67,9 +81,16 @@ async function main(){
             parent.appendChild(letterDiv)
             letterDiv.id = parseInt(key) + ":" + parseInt(col)
             letterDiv.addEventListener("click", (click) => {
-                if (IsValid(selectedTiles, parseInt(key), parseInt(col))){
-                    letterDiv.style.backgroundColor = "rgb(255, 0, 255)";
+                if (IsValid(selectedTiles, parseInt(key), parseInt(col)) === 1){
+                    letterDiv.style.backgroundColor = selectedColor;
                     selectedTiles.push([parseInt(key), parseInt(col)]);
+                    word = word + letterChild.innerText;
+                    document.getElementsByClassName("word")[0].innerText = word;
+                } else if (IsValid(selectedTiles, parseInt(key), parseInt(col)) === 2){
+                    document.getElementById(parseInt(key) + ":" + parseInt(col)).style.backgroundColor = UNselectedColor;
+                    selectedTiles.pop();
+                    word = word.substring(0, word.length);
+                    document.getElementsByClassName("word")[0].innerText = word;
                 }
             })
 

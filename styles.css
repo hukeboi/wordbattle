@@ -40,3 +40,8 @@ body {
     display: flex;
     justify-content: center;
 }
+.word{
+    text-align: center;
+    font-family: Arial;
+    color: white;
+}
