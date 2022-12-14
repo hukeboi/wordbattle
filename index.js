@@ -31,13 +31,9 @@ function IsValid(allBoxes, row, col){
         } else {return 0;}
     }
 
-    if (JSON.stringify(allBoxes[allBoxes.length - 2]) === JSON.stringify([row, col])){
-        return 2;
-    }
-
     for (let i = 0; i < allBoxes.length; i++){
         if (JSON.stringify(allBoxes[i]) === JSON.stringify([row, col])){
-            return 0;
+            return 2;
         }
     }
 
@@ -48,6 +44,31 @@ function IsValid(allBoxes, row, col){
         }
     }
     return 0;
+}
+
+//returns the arr1 but deletes arr2 values from it
+function RemoveFromArray(arr1, arr2){
+    let retVal = [];
+    if (arr2.length === 1){
+        for (let i = 0; i < arr1.length; i++){
+            if (JSON.stringify(arr1[i]) !== JSON.stringify(arr2)){
+                retVal.push(arr1[i])
+            }
+        }
+        return retVal;
+    }
+    for (let i = 0; i < arr1.length; i++){
+        let isValid = true;
+        for (let e = 0; e < arr2.length; e++){
+            if (JSON.stringify(arr1[i]) === JSON.stringify(arr2[e])){
+                isValid = false;
+            }
+        }
+        if (isValid){
+            retVal.push(arr1[i]);
+        }
+    }
+    return retVal;
 }
 
 async function main(){
@@ -87,11 +108,26 @@ async function main(){
                     word = word + letterChild.innerText;
                     document.getElementsByClassName("word")[0].innerText = word;
                 } else if (IsValid(selectedTiles, parseInt(key), parseInt(col)) === 2){
-                    document.getElementById(parseInt(key) + ":" + parseInt(col)).style.backgroundColor = UNselectedColor;
-                    selectedTiles.pop();
-                    word = word.substring(0, word.length);
+                    let toRemove = [];
+                    for (let i = selectedTiles.length - 1; i >= 0; i--){
+                        let LastToRemove = false;
+                        if (selectedTiles[i][0] === parseInt(key) && selectedTiles[i][1] === parseInt(col)){
+                            LastToRemove = true;
+                        }
+                        toRemove.push(selectedTiles[i])
+                        document.getElementById(selectedTiles[i][0] + ":" + selectedTiles[i][1]).style.backgroundColor = UNselectedColor;
+                        word = word.substring(0, word.length - 1);
+                        if (LastToRemove){
+                            break;
+                        }
+                    }
+                    if (toRemove.length === 1) {
+                        console.log("ok")
+                    }
+                    selectedTiles = RemoveFromArray(selectedTiles, toRemove)
                     document.getElementsByClassName("word")[0].innerText = word;
                 }
+                //console.log(selectedTiles)
             })
 
         }
