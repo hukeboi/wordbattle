@@ -1,6 +1,4 @@
 ﻿//TODO:
-// - make the opponent client reflect new changes (words)
-// - update valid tile check (it breaks after first turn)
 // - reset the "word" after each turn
 
 async function fetchAsync(url, headers, body) {
@@ -24,7 +22,7 @@ function compare( a, b ) {
     return 0;
 }
   
-const url = "https://word-battle-server.hugestudios.repl.co";
+let url = "https://word-battle-server.hugestudios.replitt.co";
 let selectedTiles = [];
 let allTiles = [];
 let allEnemyTiles = [];
@@ -179,27 +177,24 @@ async function GameplayLoop(){
         RefreshColors();
         IsMyTurn = true;
         document.getElementById("sendBtn").style.visibility = "visible";
+        word = "";
+        document.getElementsByClassName("word")[0].innerText = word;
         ToggleAllTiles(IsMyTurn);
     }
 }
 
 
 async function main(){
-    //await fetchAsync(url + "/postword", {'secret': "1234", "content-type":"application/json"}, {'word': "testilol"})
-    document.getElementById("placeholderMap").style.display = "none";
-    document.getElementById("underBoard").style.display = "inherit";
-    
 
-    let ping = await fetch(url + "/ping")
-    if (ping.status !== 200){
+    let ping = await fetch(url + "/ping").catch(function() {
         alert("Failed to connect to server")
-        return
-    }
+        document.location.reload();
+    });
 
     const startData = await fetchAsync(url + "/getserverstatus")
     if (startData.result === "-1") {
         alert(startData.error)
-        return
+        document.location.reload();
     }
     if (startData.player === "1"){
         IsMyTurn = true;
@@ -213,7 +208,6 @@ async function main(){
         allTiles = [[13, 1], [13, 2], [13, 3], [13, 4], [13, 5], [13, 6], [13, 7], [13, 8], [13, 9], [13, 10]];
         allEnemyTiles = [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [1, 8], [1, 9], [1, 10]];
     }
-    
     player = startData.player
     secret = startData.secret;
     console.log(startData.player)
@@ -221,8 +215,10 @@ async function main(){
     const gameData = await fetchAsync(url + "/getgamedata", headers);
     if (gameData.result === "-1") {
         alert(gameData.error)
-        return
+        document.location.reload();
     }
+    document.getElementById("placeholderMap").style.display = "none";
+    document.getElementById("underBoard").style.display = "inherit";
     for (const [key, value] of Object.entries(gameData.data).sort(compare)) {
         let parent = document.createElement("div");
         parent.className = "letterParent";
@@ -245,7 +241,6 @@ async function main(){
                     //letterDiv.style.backgroundColor = selectedColor;
                     selectedTiles.push([parseInt(key), parseInt(col)]);
                     RefreshColors();
-                    if (word === " ") {word = ""}
                     word = word + letterChild.innerText;
                     document.getElementsByClassName("word")[0].innerText = word;
                 } else if (IsValid(selectedTiles, parseInt(key), parseInt(col)) === 2){
@@ -266,7 +261,6 @@ async function main(){
                     
                     selectedTiles = RemoveFromArray(selectedTiles, toRemove)
                     RefreshColors();
-                    if (word === "") {word = " "}
                     document.getElementsByClassName("word")[0].innerText = word;
                 }
                 //console.log(selectedTiles)
@@ -305,4 +299,12 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
         return
     }
 });
-main().catch(console.log);
+
+
+document.getElementById("findgame").addEventListener("click", (click) => {
+    url = document.getElementById("url").value;
+    document.getElementById("findgame").style.display = "none";
+    document.getElementById("url").style.display = "none";
+    main().catch(console.log);
+});
+//main().catch(console.log);

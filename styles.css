@@ -70,3 +70,36 @@ body {
     left: 60.3%;
     margin-top: -50px;
 }
+
+.searchMatch{
+    position: absolute;
+    width: 100%;
+    left: 0;
+}
+#findgame{
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 20px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+#url{
+    padding-top: 4px;
+    padding-bottom: 4px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 20px;
+    font-family: 'Courier New';
+    background:rgb(95, 95, 95);
+    border: none; 
+    border-width: 0; 
+    box-shadow: none;
+}
+input:focus, textarea:focus, select:focus{
+    outline: none;
+}
+#url::selection {
+    background: rgb(205, 205, 205);
+}
