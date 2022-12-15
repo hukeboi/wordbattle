@@ -118,7 +118,7 @@ def postword():
         playerHasVoted[0] = False
         if currentTurn == 1: currentTurn = 2 
         else: currentTurn = 1
-        return jsonify({"result":"0"})
+        return jsonify({"result":"0", "answer": playerHasVoted[1]})
     elif request.headers['player'] == "2" and request.headers['secret'] == playerSecrets[1]:
         currentWord = request.json['word']
         currentWordData = request.json['worddata']
@@ -127,7 +127,7 @@ def postword():
         playerHasVoted[0] = False
         if currentTurn == 1: currentTurn = 2 
         else: currentTurn = 1
-        return jsonify({"result":"0"})
+        return jsonify({"result":"0", "answer": playerHasVoted[1]})
     else:
         return jsonify({"result" : "-1", "error":"Invalid player secret."})
 

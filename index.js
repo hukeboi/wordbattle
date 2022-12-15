@@ -26,9 +26,13 @@ function compare( a, b ) {
   
 const url = "https://word-battle-server.hugestudios.repl.co";
 let selectedTiles = [];
+let allTiles = [];
+let allEnemyTiles = [];
 let word = "";
 const selectedColorP1 = "rgb(209, 63, 52)";
+const ACTSELECTCOLORP1 = "rgb(189, 85, 77)";
 const selectedColorP2 = "rgb(33, 82, 217)";
+const ACTSELECTCOLORP2 = "rgb(97, 124, 199)";
 let selectedColor = "rgb(0, 0, 0)"
 const UNselectedColor = "white";
 let IsMyTurn = false;
@@ -38,15 +42,12 @@ let player;
 //0 = not a valid move, 1 = valid move, 2 = remove tile
 function IsValid(allBoxes, row, col){
     if (allBoxes.length === 0){
-        if (player === "1"){
-            if (row === 1){
+        for (let i = 0; i < allTiles.length; i++){
+            if (JSON.stringify(allTiles[i]) === JSON.stringify([row, col])){
                 return 1;
-            } else {return 0;}
-        } else if (player === "2"){
-            if (row === 13){
-                return 1;
-            } else {return 0;}
-        } 
+            }
+        }
+        return 0;
     }
 
     for (let i = 0; i < allBoxes.length; i++){
@@ -94,12 +95,55 @@ function RemoveFromArray(arr1, arr2){
 function ToggleAllTiles(on){
     for (let x = 1; x <= 13; x++){
         for (let y = 1; y <= 10; y++){
-            console.log(x, y)
             if (on){
                 document.getElementById(x + ":" + y).classList.remove("noturn");
             } else {
                 document.getElementById(x + ":" + y).classList.add("noturn");
             }
+            
+        }
+    }
+}
+
+function RefreshColors(){
+    if (player === "1"){
+        var enemyColor = selectedColorP2;
+        var friendlyColor = selectedColorP1;
+        var selecColor = ACTSELECTCOLORP1;
+    } else if (player === "2") {
+        var enemyColor = selectedColorP1;
+        var friendlyColor = selectedColorP2;
+        var selecColor = ACTSELECTCOLORP2;
+    } else {
+        var enemyColor = "rgb(0, 0, 0)";
+        var friendlyColor = "rgb(0, 0, 0)";
+        var selecColor = "rgb(0, 0, 0)";
+    }
+    for (let x = 1; x <= 13; x++){
+        for (let y = 1; y <= 10; y++){
+            let isFreeTile = true;
+            for (let i = 0; i < allEnemyTiles.length; i++){
+                if (JSON.stringify(allEnemyTiles[i]) === JSON.stringify([x, y])){
+                    isFreeTile = false;
+                    document.getElementById(x + ":" + y).style.backgroundColor = enemyColor;
+                }
+            }
+            for (let i = 0; i < allTiles.length; i++){
+                if (JSON.stringify(allTiles[i]) === JSON.stringify([x, y])){
+                    isFreeTile = false;
+                    document.getElementById(x + ":" + y).style.backgroundColor = friendlyColor;
+                }
+            }
+            for (let i = 0; i < selectedTiles.length; i++){
+                //console.log(JSON.stringify(selectedTiles[i]), " ", JSON.stringify([x, y]))
+                if (JSON.stringify(selectedTiles[i]) === JSON.stringify([x, y])){
+                    isFreeTile = false;
+                    document.getElementById(x + ":" + y).style.backgroundColor = selecColor;
+                }
+            }
+            if (isFreeTile){
+                document.getElementById(x + ":" + y).style.backgroundColor = UNselectedColor;
+            } 
             
         }
     }
@@ -116,19 +160,23 @@ async function GameplayLoop(){
         }
         let answer = confirm('New word: Do you confirm it? "' + newWord.word + '"')
         if (answer){
-            const newWord = await fetchAsync(url + "/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "true"});
-            if (newWord.result === "-1") {
-                alert(newWord.error)
+            const approve = await fetchAsync(url + "/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "true"});
+            if (approve.result === "-1") {
+                alert(approve.error)
                 return
             }
-            //TODO: show enemys word
+            for (let i = 0; i < newWord.data.length; i++){
+                allEnemyTiles.push(newWord.data[i])
+            }
+            console.log(JSON.stringify(newWord.data));
         } else {
-            const newWord = await fetchAsync(url + "/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "false"});
-            if (newWord.result === "-1") {
-                alert(newWord.error)
+            const approve = await fetchAsync(url + "/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "false"});
+            if (approve.result === "-1") {
+                alert(approve.error)
                 return
             }
         }
+        RefreshColors();
         IsMyTurn = true;
         document.getElementById("sendBtn").style.visibility = "visible";
         ToggleAllTiles(IsMyTurn);
@@ -156,11 +204,16 @@ async function main(){
     if (startData.player === "1"){
         IsMyTurn = true;
         selectedColor = selectedColorP1;
+        allTiles = [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [1, 8], [1, 9], [1, 10]];
+        allEnemyTiles = [[13, 1], [13, 2], [13, 3], [13, 4], [13, 5], [13, 6], [13, 7], [13, 8], [13, 9], [13, 10]];
     } else {
         IsMyTurn = false;
         document.getElementById("sendBtn").style.visibility = "hidden";
         selectedColor = selectedColorP2;
+        allTiles = [[13, 1], [13, 2], [13, 3], [13, 4], [13, 5], [13, 6], [13, 7], [13, 8], [13, 9], [13, 10]];
+        allEnemyTiles = [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [1, 8], [1, 9], [1, 10]];
     }
+    
     player = startData.player
     secret = startData.secret;
     console.log(startData.player)
@@ -189,8 +242,9 @@ async function main(){
                         alert("You cant have more than 8 letters.");
                         return;
                     }
-                    letterDiv.style.backgroundColor = selectedColor;
+                    //letterDiv.style.backgroundColor = selectedColor;
                     selectedTiles.push([parseInt(key), parseInt(col)]);
+                    RefreshColors();
                     if (word === " ") {word = ""}
                     word = word + letterChild.innerText;
                     document.getElementsByClassName("word")[0].innerText = word;
@@ -201,14 +255,17 @@ async function main(){
                         if (selectedTiles[i][0] === parseInt(key) && selectedTiles[i][1] === parseInt(col)){
                             LastToRemove = true;
                         }
-                        toRemove.push(selectedTiles[i])
-                        document.getElementById(selectedTiles[i][0] + ":" + selectedTiles[i][1]).style.backgroundColor = UNselectedColor;
+                        toRemove.push(selectedTiles[i]);
+                        
+                        //document.getElementById(selectedTiles[i][0] + ":" + selectedTiles[i][1]).style.backgroundColor = UNselectedColor;
                         word = word.substring(0, word.length - 1);
                         if (LastToRemove){
                             break;
                         }
                     }
+                    
                     selectedTiles = RemoveFromArray(selectedTiles, toRemove)
+                    RefreshColors();
                     if (word === "") {word = " "}
                     document.getElementsByClassName("word")[0].innerText = word;
                 }
@@ -219,19 +276,30 @@ async function main(){
         document.getElementById("map").appendChild(parent);
         //document.getElementById("map").appendChild(document.getElementById("underBoard"))
     }
+    RefreshColors();
     GameplayLoop();
 }
 document.getElementById("underBoard").style.display = "none";
 document.getElementById("sendBtn").addEventListener("click", async (event) => {
-    if (selectedTiles.length >= 2 && selectedTiles.length < 8){
+    if (selectedTiles.length >= 2 && selectedTiles.length <= 8){
         document.getElementById("sendBtn").style.visibility = "hidden";
         IsMyTurn = false;
-        const startData = await fetchAsync(url + "/postword", {"secret": secret, "player": player, "content-type":"application/json"}, {"word": word, "worddata": selectedTiles})
-        if (startData.result === "-1") {
-            alert(startData.error)
+        const postData = await fetchAsync(url + "/postword", {"secret": secret, "player": player, "content-type":"application/json"}, {"word": word, "worddata": selectedTiles})
+        if (postData.result === "-1") {
+            alert(postData.error)
             return
         }
-        GameplayLoop()
+        console.log(postData.answer)
+        if (postData.answer){
+            for (let i = 0; i < selectedTiles.length; i++){
+                allTiles.push(selectedTiles[i]);
+            }
+            selectedTiles = [];
+        } else {
+            selectedTiles = [];
+        }
+        RefreshColors();
+        GameplayLoop();
     } else {
         alert("Too short word.")
         return
