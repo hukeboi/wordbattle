@@ -3,10 +3,16 @@
 
 async function fetchAsync(url, headers, body) {
     if (headers === undefined){
-        var response = await fetch(url);
+        console.log({"gameid": gameID})
+        hed = {"gameid": gameID}
+        var response = await fetch(url, {headers: hed});
     } else if (body === undefined){
-        var response = await fetch(url, {"headers": headers});
+        headers["gameid"] = gameID;
+        console.log(headers)
+        var response = await fetch(url, {headers: headers});
     } else {
+        headers["gameid"] = gameID;
+        console.log(headers)
         var response = await fetch(url, {method:"POST", headers: headers, body: JSON.stringify(body)});
     }
     let data = await response.json();
@@ -22,7 +28,7 @@ function compare( a, b ) {
     return 0;
 }
   
-let url = "https://word-battle-server.hugestudios.replitt.co";
+let url = "https://word-battle-server.hugestudios.repl.co";
 let selectedTiles = [];
 let allTiles = [];
 let allEnemyTiles = [];
@@ -36,6 +42,7 @@ const UNselectedColor = "white";
 let IsMyTurn = false;
 let secret;
 let player;
+let gameID = "none";
 
 //0 = not a valid move, 1 = valid move, 2 = remove tile
 function IsValid(allBoxes, row, col){
@@ -151,27 +158,27 @@ function RefreshColors(){
 async function GameplayLoop(){
     if (IsMyTurn === false){
         ToggleAllTiles(IsMyTurn);
-        const newWord = await fetchAsync(url + "/getnewword", {"secret": secret, "player": player});
+        const newWord = await fetchAsync(url + "/api/getnewword", {"secret": secret, "player": player});
         if (newWord.result === "-1") {
-            alert(newWord.error)
-            return
+            alert(newWord.error);
+            document.location.reload();
         }
         let answer = confirm('New word: Do you confirm it? "' + newWord.word + '"')
         if (answer){
-            const approve = await fetchAsync(url + "/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "true"});
+            const approve = await fetchAsync(url + "/api/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "true"});
             if (approve.result === "-1") {
-                alert(approve.error)
-                return
+                alert(approve.error);
+                document.location.reload();
             }
             for (let i = 0; i < newWord.data.length; i++){
                 allEnemyTiles.push(newWord.data[i])
             }
             console.log(JSON.stringify(newWord.data));
         } else {
-            const approve = await fetchAsync(url + "/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "false"});
+            const approve = await fetchAsync(url + "/api/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "false"});
             if (approve.result === "-1") {
-                alert(approve.error)
-                return
+                alert(approve.error);
+                document.location.reload();
             }
         }
         RefreshColors();
@@ -186,12 +193,21 @@ async function GameplayLoop(){
 
 async function main(){
 
-    let ping = await fetch(url + "/ping").catch(function() {
+    let ping = await fetch(url + "/api/ping").catch(function() {
         alert("Failed to connect to server")
         document.location.reload();
     });
 
-    const startData = await fetchAsync(url + "/getserverstatus")
+
+    if (gameID === "none"){
+        let resp = await fetch(url + "/api/makenewgame")
+        let data = await resp.json();
+        console.log(JSON.stringify(data))
+        gameID = data.gameid;
+        console.log("GAME ID " + gameID)
+    }
+
+    const startData = await fetchAsync(url + "/api/getserverstatus")
     if (startData.result === "-1") {
         alert(startData.error)
         document.location.reload();
@@ -212,7 +228,7 @@ async function main(){
     secret = startData.secret;
     console.log(startData.player)
     const headers = {'secret': secret}
-    const gameData = await fetchAsync(url + "/getgamedata", headers);
+    const gameData = await fetchAsync(url + "/api/getgamedata", headers);
     if (gameData.result === "-1") {
         alert(gameData.error)
         document.location.reload();
@@ -278,10 +294,10 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
     if (selectedTiles.length >= 2 && selectedTiles.length <= 8){
         document.getElementById("sendBtn").style.visibility = "hidden";
         IsMyTurn = false;
-        const postData = await fetchAsync(url + "/postword", {"secret": secret, "player": player, "content-type":"application/json"}, {"word": word, "worddata": selectedTiles})
+        const postData = await fetchAsync(url + "/api/postword", {"secret": secret, "player": player, "content-type":"application/json"}, {"word": word, "worddata": selectedTiles})
         if (postData.result === "-1") {
             alert(postData.error)
-            return
+            document.location.reload();
         }
         console.log(postData.answer)
         if (postData.answer){
@@ -296,15 +312,20 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
         GameplayLoop();
     } else {
         alert("Too short word.")
-        return
+        document.location.reload();
     }
 });
 
 
 document.getElementById("findgame").addEventListener("click", (click) => {
-    url = document.getElementById("url").value;
+    //url = document.getElementById("url").value;
+    if (document.getElementById("url").value !== ""){
+        gameID = document.getElementById("url").value;
+    }
+    console.log(gameID)
     document.getElementById("findgame").style.display = "none";
     document.getElementById("url").style.display = "none";
+    
     main().catch(console.log);
 });
 //main().catch(console.log);

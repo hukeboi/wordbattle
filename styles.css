@@ -96,6 +96,7 @@ body {
     border: none; 
     border-width: 0; 
     box-shadow: none;
+    width: 10%;
 }
 input:focus, textarea:focus, select:focus{
     outline: none;
