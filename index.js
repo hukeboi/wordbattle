@@ -1,5 +1,5 @@
 ﻿//TODO:
-// - reset the "word" after each turn
+// - it breaks if both players have same tile
 
 async function fetchAsync(url, headers, body) {
     if (headers === undefined){
