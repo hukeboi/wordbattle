@@ -25,7 +25,7 @@ body {
     background-color: white;
 }
 .letterChild{
-    font-family: fantasy;
+    font-family: Arial;
     margin-top: 9px;
     text-align: center;
     font-size: 120%;
@@ -103,4 +103,13 @@ input:focus, textarea:focus, select:focus{
 }
 #url::selection {
     background: rgb(205, 205, 205);
+}
+
+#waiting{
+    color: white;
+    text-align: center;
+    font-family: arial;
+}
+#code{
+    font-family: arial;
 }

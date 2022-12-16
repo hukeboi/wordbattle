@@ -1,19 +1,20 @@
 ﻿//TODO:
 // - it breaks if both players have same tile
-// - create custom confirm method
+// - add game id to ui so the player can share it
+// - fix weird css (scaling and positioning)
+// - make admin api calls to control the server
+// - fix hovering tiles its brook
+// - show the word enemy used
 
 async function fetchAsync(url, headers, body) {
     if (headers === undefined){
-        console.log({"gameid": gameID})
         hed = {"gameid": gameID}
         var response = await fetch(url, {headers: hed});
     } else if (body === undefined){
         headers["gameid"] = gameID;
-        console.log(headers)
         var response = await fetch(url, {headers: headers});
     } else {
         headers["gameid"] = gameID;
-        console.log(headers)
         var response = await fetch(url, {method:"POST", headers: headers, body: JSON.stringify(body)});
     }
     let data = await response.json();
@@ -77,7 +78,6 @@ function RemoveFromArray(arr1, arr2){
     if (arr2.length === 1){
         arr2 = arr2[0];
         for (let i = 0; i < arr1.length; i++){
-            console.log(JSON.stringify(arr1[i]), JSON.stringify(arr2))
             if (JSON.stringify(arr1[i]) !== JSON.stringify(arr2)){
                 retVal.push(arr1[i]);
             }
@@ -96,6 +96,56 @@ function RemoveFromArray(arr1, arr2){
         }
     }
     return retVal;
+}
+
+function isInList(arr, item){
+    for (let i = 0; i < arr.length; i++){
+        if (JSON.stringify(arr[i]) === JSON.stringify(item)){
+            return true;
+        }
+    }
+    return false;
+}
+
+function CheckTile(tiles, tile, visited, player){
+    console.log("------------------")
+    console.log(tile)
+    tiles = RemoveFromArray(tiles, visited);
+    let retFalse = true;
+    for (let i = tiles.length - 1; i > 0; i--){
+        
+        if ((Math.abs(tile[0] - tiles[i][0]) === 1 || Math.abs(tile[0] - tiles[i][0]) === 0) && (Math.abs(tile[1] - tiles[i][1]) === 1 || Math.abs(tile[1] - tiles[i][1]) === 0)){
+            if ((player === "1" && tiles[i][0] === 1) || (player === "2" && tiles[i][0] === 13)){
+                return true;
+            } else if (isInList(visited, tiles[i]) === false){
+                visited.push(tiles[i]);
+                if (CheckTile(tiles, tiles[i], visited, player)){
+                    retFalse = false;
+                }
+            }
+        }
+    }
+    if (retFalse === false){return true}
+    return false
+    
+
+}
+
+function CheckIfValid(tiles, player){
+    toRemove = []
+    console.log(tiles)
+    for (let i = 0; i < tiles.length; i++){
+        if (player === "1" && (tiles[i][0] === 1 || tiles[i][0] === 2)) {
+            continue;
+        } else if (player === "2" && (tiles[i][0] === 13 || tiles[i][0] === 12)) {
+            continue;
+        }
+        if (CheckTile(tiles, tiles[i], [], player) === false){
+            toRemove.push(tiles[i])
+        }
+
+    }
+    return RemoveFromArray(tiles, toRemove);
 }
 
 function ToggleAllTiles(on){
@@ -141,7 +191,6 @@ function RefreshColors(){
                 }
             }
             for (let i = 0; i < selectedTiles.length; i++){
-                //console.log(JSON.stringify(selectedTiles[i]), " ", JSON.stringify([x, y]))
                 if (JSON.stringify(selectedTiles[i]) === JSON.stringify([x, y])){
                     isFreeTile = false;
                     document.getElementById(x + ":" + y).style.backgroundColor = selecColor;
@@ -164,24 +213,14 @@ async function GameplayLoop(){
             alert(newWord.error);
             document.location.reload();
         }
-        let answer = confirm('New word: Do you confirm it? "' + newWord.word + '"')
-        if (answer){
-            const approve = await fetchAsync(url + "/api/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "true"});
-            if (approve.result === "-1") {
-                alert(approve.error);
-                document.location.reload();
-            }
-            for (let i = 0; i < newWord.data.length; i++){
+        for (let i = 0; i < newWord.data.length; i++){
+            if (isInList(allEnemyTiles, newWord.data[i]) === false){
                 allEnemyTiles.push(newWord.data[i])
             }
-            console.log(JSON.stringify(newWord.data));
-        } else {
-            const approve = await fetchAsync(url + "/api/approveword", {"secret": secret, "player": player, "content-type":"application/json"}, {"result": "false"});
-            if (approve.result === "-1") {
-                alert(approve.error);
-                document.location.reload();
-            }
         }
+        allTiles = RemoveFromArray(allTiles, allEnemyTiles);
+        
+        allTiles = CheckIfValid(allTiles, player);
         RefreshColors();
         IsMyTurn = true;
         document.getElementById("sendBtn").style.visibility = "visible";
@@ -203,11 +242,14 @@ async function main(){
     if (gameID === "none"){
         let resp = await fetch(url + "/api/makenewgame")
         let data = await resp.json();
-        console.log(JSON.stringify(data))
+        if (data.result === "-1"){
+            alert(data.error);
+            document.location.reload();
+        }
         gameID = data.gameid;
         console.log("GAME ID " + gameID)
     }
-
+    
     const startData = await fetchAsync(url + "/api/getserverstatus")
     if (startData.result === "-1") {
         alert(startData.error)
@@ -225,10 +267,13 @@ async function main(){
         allTiles = [[13, 1], [13, 2], [13, 3], [13, 4], [13, 5], [13, 6], [13, 7], [13, 8], [13, 9], [13, 10]];
         allEnemyTiles = [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [1, 8], [1, 9], [1, 10]];
     }
+    
     player = startData.player
     secret = startData.secret;
     console.log(startData.player)
     const headers = {'secret': secret}
+    document.getElementById("waiting").style.display = "inherit";
+    document.getElementById("code").innerText = "Your lobby code: " + gameID;
     const gameData = await fetchAsync(url + "/api/getgamedata", headers);
     if (gameData.result === "-1") {
         alert(gameData.error)
@@ -236,6 +281,9 @@ async function main(){
     }
     document.getElementById("placeholderMap").style.display = "none";
     document.getElementById("underBoard").style.display = "inherit";
+
+    document.getElementById("waiting").style.display = "none";
+
     for (const [key, value] of Object.entries(gameData.data).sort(compare)) {
         let parent = document.createElement("div");
         parent.className = "letterParent";
@@ -300,24 +348,24 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
             alert(postData.error)
             document.location.reload();
         }
-        console.log(postData.answer)
-        if (postData.answer){
-            for (let i = 0; i < selectedTiles.length; i++){
+        for (let i = 0; i < selectedTiles.length; i++){
+            if (isInList(allTiles, selectedTiles[i]) === false){
                 allTiles.push(selectedTiles[i]);
             }
-            selectedTiles = [];
-        } else {
-            selectedTiles = [];
         }
+        selectedTiles = [];
+        allEnemyTiles = RemoveFromArray(allEnemyTiles, allTiles);
+        let p;
+        if (player === "1") {p = "2"} else {p = "1"}
+        allEnemyTiles = CheckIfValid(allEnemyTiles, p);
         RefreshColors();
         GameplayLoop();
     } else {
         alert("Too short word.")
-        document.location.reload();
     }
 });
-
-
+document.getElementById("url").value = "";
+document.getElementById("waiting").style.display = "none";
 document.getElementById("findgame").addEventListener("click", (click) => {
     //url = document.getElementById("url").value;
     if (document.getElementById("url").value !== ""){
@@ -329,4 +377,12 @@ document.getElementById("findgame").addEventListener("click", (click) => {
     
     main().catch(console.log);
 });
+
+async function quitGame(){
+    await fetch(url + "/api/quit?id=" + gameID)
+}
+window.onbeforeunload = async function(){
+    await quitGame();
+    return "what";
+};
 //main().catch(console.log);

@@ -1,5 +1,4 @@
 ﻿from flask import Flask, request, jsonify
-from threading import Thread
 import time
 import secrets
 import random
@@ -7,7 +6,7 @@ from flask_cors import CORS, cross_origin
 
 app = Flask('')
 
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/api/*": {"origins": "*.wordbattle.tk"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/')
@@ -17,11 +16,11 @@ def main():
 allLetters = "ABDEFGHIJKLMNOPRSTUVYÄÖ"
 weights = (
     19, #A
-    5,  #B
-    5,  #D
+    2,  #B
+    2,  #D
     18, #E
-    6,  #F
-    8,  #G
+    2,  #F
+    4,  #G
     17,  #H
     20,  #I
     19,  #J
@@ -37,8 +36,8 @@ weights = (
     19,  #U
     14,  #V
     3,  #Y
-    14,  #Ä
-    14,  #Ö
+    12,  #Ä
+    10,  #Ö
 
 )
 def returnNewGrid():
@@ -49,30 +48,42 @@ def returnNewGrid():
             columnVal[str(column) + "col"] = random.choices(allLetters, weights=weights)
         new[str(row) + "row"] = columnVal
     return new
+def IsValidWord(map, word, wordData):
+    if len(word) != len(wordData): 
+        return False
+    for i in range(0, len(wordData), 1):
+        pos = map[str(wordData[i][0]) + "row"][str(wordData[i][1]) + "col"]
+        if pos[0] != word[i]:
+            return False
+            
+    return True
+
 
 
 allData = {
 
 }
 
+maxGames = 5
+adminPassword = "1234"
+
 #playersInServer = 0
 #playerSecrets = []
 #map = {}
 #currentTurn = 1
-#playerHasVoted = [False, False] #index 0 indicates if player voted, index 1 indicates the value of the vote
 #currentWord = ""
 #currentWordData = []
 
 @app.route('/api/makenewgame', methods=['GET'])
 @cross_origin()
 def makenewgame():
+    if len(allData) > maxGames: return jsonify({"result" : "-1", "error":"The server is currently at full capacity"})
     newGameId = str(secrets.token_hex(2))
     allData[newGameId] = {
         "playersInServer": 0,
         "playerSecrets": [],
         "map": {},
         "currentTurn": 1,
-        "playerHasVoted": [False, False],
         "currentWord": "",
         "currentWordData": []
     }
@@ -132,21 +143,15 @@ def postword():
     if request.headers['player'] == "1" and request.headers['secret'] == data["playerSecrets"][0]:
         data["currentWord"] = request.json['word']
         data["currentWordData"] = request.json['worddata']
-        while data["playerHasVoted"][0] == False:
-            time.sleep(0.1)
-        data["playerHasVoted"][0] = False
-        if data["currentTurn"] == 1: data["currentTurn"] = 2 
-        else: data["currentTurn"] = 1
-        return jsonify({"result":"0", "answer": data["playerHasVoted"][1]})
+        if IsValidWord(data["map"], data["currentWord"], data["currentWordData"]) == False: return jsonify({"result":"-1", "error": "invalid word"}) 
+        data["currentTurn"] = 2
+        return jsonify({"result":"0"})
     elif request.headers['player'] == "2" and request.headers['secret'] == data["playerSecrets"][1]:
         data["currentWord"] = request.json['word']
         data["currentWordData"] = request.json['worddata']
-        while data["playerHasVoted"][0] == False:
-            time.sleep(0.1)
-        data["playerHasVoted"][0] = False
-        if data["currentTurn"] == 1: data["currentTurn"] = 2 
-        else: data["currentTurn"] = 1
-        return jsonify({"result":"0", "answer": data["playerHasVoted"][1]})
+        if IsValidWord(data["map"], data["currentWord"], data["currentWordData"]) == False: return jsonify({"result":"-1", "error": "invalid word"}) 
+        data["currentTurn"] = 1
+        return jsonify({"result":"0"})
     else:
         return jsonify({"result" : "-1", "error":"Invalid player secret."})
 
@@ -159,12 +164,16 @@ def getnewword():
         return jsonify({"result":"-1", "error":"An internal error occured"})
     if request.headers['player'] == "1" and request.headers['secret'] == data["playerSecrets"][0]:
         while data["currentWord"] == "":
+            if request.headers['gameid'] not in allData:
+                return jsonify({"result":"-1", "error": "Game closed"})
             time.sleep(0.1)
         word = data["currentWord"]
         data["currentWord"] = ""
         return jsonify({"result":"0", "word": word, "data":data["currentWordData"]})
     elif request.headers['player'] == "2" and request.headers['secret'] == data["playerSecrets"][1]:
         while data["currentWord"] == "":
+            if request.headers['gameid'] not in allData:
+                return jsonify({"result":"-1", "error": "Game closed"})
             time.sleep(0.1)
         word = data["currentWord"]
         data["currentWord"] = ""
@@ -172,47 +181,20 @@ def getnewword():
     else:
         return jsonify({"result" : "-1", "error":"Invalid player secret."})
 
-@app.route('/api/approveword', methods=['POST'])
-@cross_origin()
-def approveword():
-    if request.headers['gameid'] not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
-    data = allData[request.headers['gameid']]
-    if (request.headers['player'] == str(data["currentTurn"])):
-        return jsonify({"result":"-1", "error":"An internal error occured"})
-    if request.headers['player'] == "1" and request.headers['secret'] == data["playerSecrets"][0]:
-        if request.json['result'] == "true":
-            data["playerHasVoted"][1] = True
-        else:
-            data["playerHasVoted"][1] = False
-        data["playerHasVoted"][0] = True
-        return jsonify({"result":"0"})
-    elif request.headers['player'] == "2" and request.headers['secret'] == data["playerSecrets"][1]:
-        if request.json['result'] == "true":
-            data["playerHasVoted"][1] = True
-        else:
-            data["playerHasVoted"][1] = False
-        data["playerHasVoted"][0] = True
-        return jsonify({"result":"0"})
-    else:
-        return jsonify({"result" : "-1", "error":"Invalid player secret."})
     
 @app.route('/api/quit', methods=['GET'])
 @cross_origin()
 def quit():
-    if request.headers['gameid'] not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
-    allData.pop(request.headers['gameid'])
+    game = request.args.get('id')
+    if game not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
+    allData.pop(game)
+    print("Game deleted: " + game + "\nGames currently: " + str(len(allData)))
     return jsonify({"result":"0"})
 
-
-def run():
-    app.run(host="0.0.0.0", port=8080, threaded=True)
-
-
-def keep_alive():
-    server = Thread(target=run)
-    server.start()
-
-
-keep_alive()
-
-print("SERVER STARTED")
+@app.route('/api/admin/getallgames', methods=['GET'])
+@cross_origin()
+def getallgames():
+    if request.headers['adminkey'] == adminPassword:
+        return jsonify({"result":"0", "games":allData})
+    else:
+        return jsonify({"result":"0", "games":allData})
