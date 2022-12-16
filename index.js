@@ -1,5 +1,6 @@
 ﻿//TODO:
 // - it breaks if both players have same tile
+// - create custom confirm method
 
 async function fetchAsync(url, headers, body) {
     if (headers === undefined){
