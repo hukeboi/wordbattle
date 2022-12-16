@@ -5,12 +5,12 @@ import random
 from flask_cors import CORS, cross_origin
 from waitress import serve
 
-app = Flask('')
+applic = Flask('')
 
-cors = CORS(app, resources={r"/api/*": {"origins": "*.wordbattle.tk"}})
-app.config['CORS_HEADERS'] = 'Content-Type'
+cors = CORS(applic, resources={r"/api/*": {"origins": "*.wordbattle.tk"}})
+applic.config['CORS_HEADERS'] = 'Content-Type'
 
-@app.route('/')
+@applic.route('/')
 def main():
     return "under construction"
 
@@ -75,7 +75,7 @@ adminPassword = "1234"
 #currentWord = ""
 #currentWordData = []
 
-@app.route('/api/makenewgame', methods=['GET'])
+@applic.route('/api/makenewgame', methods=['GET'])
 @cross_origin()
 def makenewgame():
     if len(allData) > maxGames: return jsonify({"result" : "-1", "error":"The server is currently at full capacity"})
@@ -91,7 +91,7 @@ def makenewgame():
     #print("NEW GAME: " + newGameId)
     return jsonify({"result" : "0", "gameid":newGameId})
 
-@app.route('/api/getserverstatus', methods=['GET'])
+@applic.route('/api/getserverstatus', methods=['GET'])
 @cross_origin()
 def getserverstatus():
     if request.headers['gameid'] not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
@@ -99,11 +99,11 @@ def getserverstatus():
     if data["playersInServer"] == 0:
         data["playersInServer"] = 1
         Psecret = str(secrets.token_hex(32))
-        data["playerSecrets"].append(Psecret)
+        data["playerSecrets"].applicend(Psecret)
     elif data["playersInServer"] == 1:
         data["playersInServer"] = 2
         Psecret = str(secrets.token_hex(32))
-        data["playerSecrets"].append(Psecret)
+        data["playerSecrets"].applicend(Psecret)
     else:
         returnData = {"result" : "-1", "error":"Already 2 players in server."}
         return jsonify(returnData)
@@ -112,7 +112,7 @@ def getserverstatus():
     returnData = {"result" : "0", "secret": Psecret, "player": str(data["playersInServer"])}
     return jsonify(returnData)
     
-@app.route('/api/getgamedata', methods=['GET'])
+@applic.route('/api/getgamedata', methods=['GET'])
 @cross_origin()
 def getGameData():
     if request.headers['gameid'] not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
@@ -129,12 +129,12 @@ def getGameData():
         time.sleep(0.1)
     return jsonify({"result" : "0", "data": data["map"]})
 
-@app.route('/api/ping', methods=['GET'])
+@applic.route('/api/ping', methods=['GET'])
 @cross_origin()
 def ping():
     return jsonify({"result": "0"})
 
-@app.route('/api/postword', methods=['POST'])
+@applic.route('/api/postword', methods=['POST'])
 @cross_origin()
 def postword():
     if request.headers['gameid'] not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
@@ -156,7 +156,7 @@ def postword():
     else:
         return jsonify({"result" : "-1", "error":"Invalid player secret."})
 
-@app.route('/api/getnewword', methods=['GET'])
+@applic.route('/api/getnewword', methods=['GET'])
 @cross_origin()
 def getnewword():
     if request.headers['gameid'] not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
@@ -183,7 +183,7 @@ def getnewword():
         return jsonify({"result" : "-1", "error":"Invalid player secret."})
 
     
-@app.route('/api/quit', methods=['GET'])
+@applic.route('/api/quit', methods=['GET'])
 @cross_origin()
 def quit():
     game = request.args.get('id')
@@ -192,7 +192,7 @@ def quit():
     print("Game deleted: " + game + "\nGames currently: " + str(len(allData)))
     return jsonify({"result":"0"})
 
-@app.route('/api/admin/getallgames', methods=['GET'])
+@applic.route('/api/admin/getallgames', methods=['GET'])
 @cross_origin()
 def getallgames():
     if request.headers['adminkey'] == adminPassword:
@@ -202,6 +202,6 @@ def getallgames():
 
 def run():
     print("SERVER STARTED")
-    serve(app, host="0.0.0.0", port=8080, threads=maxGames)
+    serve(applic, host="0.0.0.0", port=8080, threads=maxGames)
 
 run()
