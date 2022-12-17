@@ -1,10 +1,9 @@
 ﻿//TODO:
-// - it breaks if both players have same tile
 // - add game id to ui so the player can share it
 // - fix weird css (scaling and positioning)
-// - make admin api calls to control the server
 // - fix hovering tiles its brook
 // - show the word enemy used
+
 
 async function fetchAsync(url, headers, body) {
     if (headers === undefined){
@@ -221,6 +220,16 @@ async function GameplayLoop(){
         allTiles = RemoveFromArray(allTiles, allEnemyTiles);
         
         allTiles = CheckIfValid(allTiles, player);
+        for (let i = 0; i < allEnemyTiles.length; i++){
+            if (player === "1" && allEnemyTiles[i][0] === 1)
+            {
+                alert("You lost");
+                document.location.reload();
+            } else if (player === "2" && allEnemyTiles[i][0] === 13) {
+                alert("You lost");
+                document.location.reload();
+            }
+        }
         RefreshColors();
         IsMyTurn = true;
         document.getElementById("sendBtn").style.visibility = "visible";
@@ -358,6 +367,16 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
         let p;
         if (player === "1") {p = "2"} else {p = "1"}
         allEnemyTiles = CheckIfValid(allEnemyTiles, p);
+        for (let i = 0; i < allTiles.length; i++){
+            if (player === "1" && allTiles[i][0] === 13)
+            {
+                alert("You won");
+                document.location.reload();
+            } else if (player === "2" && allTiles[i][0] === 1) {
+                alert("You won");
+                document.location.reload();
+            }
+        }
         RefreshColors();
         GameplayLoop();
     } else {
