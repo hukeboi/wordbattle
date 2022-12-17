@@ -194,7 +194,7 @@ def getallgames():
 
 @app.after_request
 def add_header(response):
-    response.headers['Access-Control-Allow-Origin'] = 'https://wordbattle.tk'
+    response.headers['Access-Control-Allow-Origin'] = 'https://www.wordbattle.tk'
     response.headers["Access-Control-Allow-Headers"] = '*'
     return response
 
