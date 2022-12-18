@@ -10,10 +10,11 @@ body {
 }
 
 .letter{
-    width: 40px;
-    height: 40px;
-    margin-left: 5px;
-    margin-top: 5px;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+    margin-top: 0.6rem;
     background-color: white;
     color: black;
     
@@ -26,11 +27,12 @@ body {
 }
 .letterChild{
     font-family: Arial;
-    margin-top: 9px;
+    margin-top: 0.5rem;
     text-align: center;
     font-size: 120%;
     cursor: default;
     user-select: none;
+    pointer-events: none;
 }
 #map{
     align-self: center;
@@ -76,13 +78,29 @@ body {
     width: 100%;
     left: 0;
 }
-#findgame{
+#join2{
     position: relative;
-    left: 50%;
+    margin-left: 1rem;
     transform: translateX(-50%);
     margin-top: 20px;
     padding-top: 4px;
     padding-bottom: 4px;
+    left: 50%;
+}
+#id{
+    padding-top: 4px;
+    padding-bottom: 4px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 20px;
+    font-family: 'Courier New';
+    background:rgb(95, 95, 95);
+    border: none; 
+    border-width: 0; 
+    box-shadow: none;
+    width: 250px;
+    width: 5%;
 }
 #url{
     padding-top: 4px;
@@ -96,7 +114,7 @@ body {
     border: none; 
     border-width: 0; 
     box-shadow: none;
-    width: 10%;
+    width: 200px;
 }
 input:focus, textarea:focus, select:focus{
     outline: none;
@@ -112,4 +130,17 @@ input:focus, textarea:focus, select:focus{
 }
 #code{
     font-family: arial;
+}
+
+.options{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    
+}
+.optBtn{
+    width: 7rem;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
 }

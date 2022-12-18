@@ -247,17 +247,6 @@ async function main(){
         document.location.reload();
     });
 
-
-    if (gameID === "none"){
-        let resp = await fetch(url + "/api/makenewgame")
-        let data = await resp.json();
-        if (data.result === "-1"){
-            alert(data.error);
-            document.location.reload();
-        }
-        gameID = data.gameid;
-        console.log("GAME ID " + gameID)
-    }
     
     const startData = await fetchAsync(url + "/api/getserverstatus")
     if (startData.result === "-1") {
@@ -383,19 +372,43 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
         alert("Too short word.")
     }
 });
-document.getElementById("url").value = "";
+document.getElementById("id").value = "";
 document.getElementById("waiting").style.display = "none";
-document.getElementById("findgame").addEventListener("click", (click) => {
-    //url = document.getElementById("url").value;
-    if (document.getElementById("url").value !== ""){
-        gameID = document.getElementById("url").value;
+
+//join
+document.getElementById("joingame").style.display = "none";
+document.getElementById("join1").addEventListener("click", (clic) => {
+    document.getElementById("create").style.display = "none";
+    document.getElementById("joingame").style.display = "inherit";
+    document.getElementById("join1").style.display = "none";
+
+})
+
+document.getElementById("create").addEventListener("click", async (click) => {
+    let resp = await fetch(url + "/api/makenewgame")
+    let data = await resp.json();
+    if (data.result === "-1"){
+        alert(data.error);
+        document.location.reload();
     }
-    console.log(gameID)
-    document.getElementById("findgame").style.display = "none";
-    document.getElementById("url").style.display = "none";
+    gameID = data.gameid;
+    console.log("GAME ID " + gameID)
+
+    document.getElementById("create").style.display = "none";
+    document.getElementById("join1").style.display = "none";
     
     main().catch(console.log);
 });
+document.getElementById("join2").addEventListener("click", (cl) => {
+    gameID = document.getElementById("id").value;
+    document.getElementById("create").style.display = "none";
+    document.getElementById("id").style.display = "none";
+    document.getElementById("join2").style.display = "none";
+    
+    main().catch(console.log);
+})
+
+
 
 async function quitGame(){
     await fetch(url + "/api/quit?id=" + gameID)
