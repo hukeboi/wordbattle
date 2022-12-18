@@ -308,8 +308,8 @@ async function main(){
             letterDiv.addEventListener("click", (click) => {
                 if (IsMyTurn === false) {return;}
                 if (IsValid(selectedTiles, parseInt(key), parseInt(col)) === 1){
-                    if (selectedTiles.length >= 8) {
-                        alert("You cant have more than 8 letters.");
+                    if (selectedTiles.length >= 9) {
+                        alert("You cant have more than 9 letters.");
                         return;
                     }
                     //letterDiv.style.backgroundColor = selectedColor;
@@ -349,7 +349,7 @@ async function main(){
 }
 document.getElementById("underBoard").style.display = "none";
 document.getElementById("sendBtn").addEventListener("click", async (event) => {
-    if (selectedTiles.length >= 2 && selectedTiles.length <= 8){
+    if (selectedTiles.length >= 2 && selectedTiles.length <= 9){
         document.getElementById("sendBtn").style.visibility = "hidden";
         IsMyTurn = false;
         const postData = await fetchAsync(url + "/api/postword", {"secret": secret, "player": player, "content-type":"application/json"}, {"word": word, "worddata": selectedTiles})

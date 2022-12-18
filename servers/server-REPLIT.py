@@ -14,16 +14,24 @@ app = Flask('')
 def main():
     return "under construction"
 
-allLetters = "ABDEFGHIJKLMNOPRSTUVYÄÖ"
+
+#CONFIG
+#max games the server will host
+maxGames = 5
+#password needed to retrieve all games from the server.
+#make a get request to '/api/admin/getallgames' with the 'admin' header set as the password
+adminPassword = "1234"
+#different letter weights
 weights = (
-    19, #A
-    2,  #B
-    2,  #D
-    18, #E
-    2,  #F
-    4,  #G
+    22,  #A
+    2,   #B
+    0,   #C
+    2,   #D
+    19,  #E
+    2,   #F
+    4,   #G
     17,  #H
-    20,  #I
+    21,  #I
     19,  #J
     19,  #K
     18,  #L
@@ -31,16 +39,21 @@ weights = (
     19,  #N
     19,  #O
     17,  #P
+    0,   #Q
     18,  #R
     19,  #S
-    19,  #T
+    20,  #T
     19,  #U
     14,  #V
-    3,  #Y
-    12,  #Ä
-    10,  #Ö
-
+    0,   #W
+    0,   #X
+    3,   #Y
+    0,   #Z
+    0,   #Å
+    9,  #Ä
+    7,  #Ö
 )
+
 def returnNewGrid():
     new = {}
     for row in range(1, 14, 1):
@@ -61,19 +74,12 @@ def IsValidWord(map, word, wordData):
 
 
 
+#DONT MODIFY THESE
 allData = {
 
 }
-
-maxGames = 5
-adminPassword = "1234"
-
-#playersInServer = 0
-#playerSecrets = []
-#map = {}
-#currentTurn = 1
-#currentWord = ""
-#currentWordData = []
+#DONT MODIFY THESE
+allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ"
 
 @app.route('/api/makenewgame', methods=['GET'])
 def makenewgame():
@@ -187,10 +193,10 @@ def quit():
 
 @app.route('/api/admin/getallgames', methods=['GET'])
 def getallgames():
-    if request.headers['adminkey'] == adminPassword:
+    if request.headers['admin'] == adminPassword:
         return jsonify({"result":"0", "games":allData})
     else:
-        return jsonify({"result":"0", "games":allData})
+        return jsonify({"result":"-1", "error":"unauthorized"})
 
 @app.after_request
 def add_header(response):
@@ -200,6 +206,6 @@ def add_header(response):
 
 def run():
     print("SERVER STARTED")
-    serve(app, host="0.0.0.0", port=8080, threads=maxGames)
+    serve(app, host="0.0.0.0", port=8080, threads=maxGames + 1)
 
 run()
