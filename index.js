@@ -131,7 +131,6 @@ function CheckTile(tiles, tile, visited, player){
 
 function CheckIfValid(tiles, player){
     toRemove = []
-    console.log(tiles)
     for (let i = 0; i < tiles.length; i++){
         if (player === "1" && (tiles[i][0] === 1 || tiles[i][0] === 2)) {
             continue;
@@ -267,7 +266,6 @@ async function main(){
     
     player = startData.player
     secret = startData.secret;
-    console.log(startData.player)
     const headers = {'secret': secret}
     document.getElementById("waiting").style.display = "inherit";
     document.getElementById("code").innerText = "Your lobby code: " + gameID;
@@ -403,7 +401,6 @@ document.getElementById("create").addEventListener("click", async (click) => {
         document.location.reload();
     }
     gameID = data.gameid;
-    console.log("GAME ID " + gameID)
 
     document.getElementById("create").style.display = "none";
     document.getElementById("join1").style.display = "none";
@@ -421,12 +418,12 @@ document.getElementById("join2").addEventListener("click", (cl) => {
     main().catch(console.log);
 })
 
-window.onunload = async function() {
-    await quitGame();
+function quitGame(){
+    fetch(url + "/api/quit?id=" + gameID)
 }
-
-async function quitGame(){
-    await fetch(url + "/api/quit?id=" + gameID)
-}
+window.addEventListener('beforeunload', () => {
+    quitGame();
+    return "Do you want to exit??";
+})
 
 //main().catch(console.log);
