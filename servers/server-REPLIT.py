@@ -18,6 +18,9 @@ MAX_WAITING_SLOTS = 4
 #max time to wait for opponent to join game (in seconds)
 MAX_WAIT_TIME = 30.0
 
+#max time from previous update to delete game (in minutes)
+MAX_INACTIVE_GAME = 4
+
 #password needed to retrieve all games from the server.
 #make a get request to '/api/admin/getallgames' with the 'admin' header set as the password
 ADMIN_PASSWORD = "1234"
@@ -171,6 +174,14 @@ allData = {
 
 @app.route('/api/makenewgame', methods=['GET'])
 def makenewgame():
+    toDel = []
+    for game in allData:
+        if time.time() - allData[game]["lastActivity"] > MAX_INACTIVE_GAME * 60:
+            toDel.append(game)
+    for i in range(0, len(toDel), 1):
+        for obj in toDel:
+            allData.pop(obj)
+            print("A game was deleted because of inactivity.")
     if len(allData) > MAX_GAMES: return jsonify({"result" : "-1", "error":"The server is currently at full capacity"})
     newGameId = str(secrets.token_hex(2))
     allData[newGameId] = {
@@ -179,7 +190,8 @@ def makenewgame():
         "map": {},
         "currentTurn": 1,
         "currentWord": "",
-        "currentWordData": []
+        "currentWordData": [],
+        "lastActivity": time.time()
     }
     #print("NEW GAME: " + newGameId)
     return jsonify({"result" : "0", "gameid":newGameId})
@@ -207,10 +219,13 @@ def getserverstatus():
 @app.route('/api/getgamedata', methods=['GET'])
 def getGameData():
     global peopleWaiting
-    if peopleWaiting >= MAX_WAITING_SLOTS: return jsonify({"result" : "-1", "error":"Too many people waiting."})
+    if peopleWaiting >= MAX_WAITING_SLOTS: 
+        allData.pop(request.headers['gameid'])
+        return jsonify({"result" : "-1", "error":"Too many people waiting."})
     peopleWaiting += 1
     if request.headers['gameid'] not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
     data = allData[request.headers['gameid']]
+    data["lastActivity"] = time.time()
     if request.headers['secret'] == data["playerSecrets"][0]:
         player = 1
     elif request.headers['secret'] == data["playerSecrets"][1]:
@@ -241,6 +256,7 @@ def ping():
 def postword():
     if request.headers['gameid'] not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
     data = allData[request.headers['gameid']]
+    data["lastActivity"] = time.time()
     if (request.headers['player'] != str(data["currentTurn"])):
         return jsonify({"result":"-1", "error":"An internal error occured"})
     if request.headers['player'] == "1" and request.headers['secret'] == data["playerSecrets"][0]:
@@ -266,6 +282,7 @@ def postword():
 def getnewword():
     if request.headers['gameid'] not in allData: return jsonify({"result" : "-1", "error":"Invalid game id."})
     data = allData[request.headers['gameid']]
+    data["lastActivity"] = time.time()
     if (request.headers['player'] == str(data["currentTurn"])):
         return jsonify({"result":"-1", "error":"An internal error occured"})
     if request.headers['player'] == "1" and request.headers['secret'] == data["playerSecrets"][0]:
