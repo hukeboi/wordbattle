@@ -349,6 +349,9 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
             IsMyTurn = true;
             document.getElementById("sendBtn").style.visibility = "visible";
             selectedTiles = [];
+            RefreshColors();
+            word = "";
+            document.getElementsByClassName("word")[0].innerText = word;
             return
         }
 
