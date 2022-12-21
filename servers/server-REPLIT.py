@@ -4,6 +4,8 @@ import secrets
 import random
 from waitress import serve
 from uralicNLP import uralicApi
+import os
+import json
 
 app = Flask('')
 
@@ -88,9 +90,18 @@ def IsRealWord(word):
   else:
     return True
 
-
-if FIRST_TIME_RUNNING:
+if os.path.exists("config.json") == False:
     uralicApi.download("fin")
+    with open("config.json", "w") as f:
+        f.write(json.dumps({"install_words": False}))
+else:
+    with open("config.json", "r") as f:
+        conf = json.load(f)
+        if conf["install_words"] == True:
+            uralicApi.download("fin")
+            conf["install_words"] = False
+            with open("config.json", "w") as f2:
+                f2.write(json.dumps(conf))
 
 #DONT MODIFY THESE
 allData = {
@@ -163,19 +174,16 @@ def postword():
         return jsonify({"result":"-1", "error":"An internal error occured"})
     if request.headers['player'] == "1" and request.headers['secret'] == data["playerSecrets"][0]:
         if IsValidWord(data["map"], data["currentWord"], data["currentWordData"]) == False: return jsonify({"result":"-1", "error": "invalid word"}) 
-        if IsRealWord(request.json['word']) == False:
-            data["currentWord"] = ""
-            data["currentWordData"] = []
-            return jsonify({"result":"0", "message": "Not a real word!"})
+        if IsRealWord(request.json['word'].lower()) == False:
+            return jsonify({"result":"1", "message": "Not a real word!"})
         data["currentWord"] = request.json['word']
         data["currentWordData"] = request.json['worddata']
+        data["currentTurn"] = 2
         return jsonify({"result":"0"})
     elif request.headers['player'] == "2" and request.headers['secret'] == data["playerSecrets"][1]:
         if IsValidWord(data["map"], data["currentWord"], data["currentWordData"]) == False: return jsonify({"result":"-1", "error": "invalid word"}) 
-        if IsRealWord(request.json['word']) == False:
-            data["currentWord"] = ""
-            data["currentWordData"] = []
-            return jsonify({"result":"0", "message": "Not a real word!"})
+        if IsRealWord(request.json['word'].lower()) == False:
+            return jsonify({"result":"1", "message": "Not a real word!"})
         data["currentWord"] = request.json['word']
         data["currentWordData"] = request.json['worddata']
         data["currentTurn"] = 1

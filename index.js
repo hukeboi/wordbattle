@@ -345,7 +345,10 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
             alert(postData.error)
             document.location.reload();
         } else if (postData.result === "1"){
-            alert("Not a word.")
+            alert("Not a word.");
+            IsMyTurn = true;
+            document.getElementById("sendBtn").style.visibility = "visible";
+            selectedTiles = [];
             return
         }
 
