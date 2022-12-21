@@ -421,13 +421,12 @@ document.getElementById("join2").addEventListener("click", (cl) => {
     main().catch(console.log);
 })
 
-
+window.onunload = async function() {
+    await quitGame();
+}
 
 async function quitGame(){
     await fetch(url + "/api/quit?id=" + gameID)
 }
-window.onbeforeunload = async function(){
-    await quitGame();
-    return "what";
-};
+
 //main().catch(console.log);
