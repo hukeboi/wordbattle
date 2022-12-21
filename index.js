@@ -344,7 +344,11 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
         if (postData.result === "-1") {
             alert(postData.error)
             document.location.reload();
+        } else if (postData.result === "1"){
+            alert("Not a word.")
+            return
         }
+
         for (let i = 0; i < selectedTiles.length; i++){
             if (isInList(allTiles, selectedTiles[i]) === false){
                 allTiles.push(selectedTiles[i]);
