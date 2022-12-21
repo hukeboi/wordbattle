@@ -44,6 +44,7 @@ let IsMyTurn = false;
 let secret;
 let player;
 let gameID = "none";
+let isWaitingForGame = false;
 
 //0 = not a valid move, 1 = valid move, 2 = remove tile
 function IsValid(allBoxes, row, col){
@@ -107,8 +108,6 @@ function isInList(arr, item){
 }
 
 function CheckTile(tiles, tile, visited, player){
-    console.log("------------------")
-    console.log(tile)
     tiles = RemoveFromArray(tiles, visited);
     let retFalse = true;
     for (let i = tiles.length - 1; i > 0; i--){
@@ -385,6 +384,8 @@ document.getElementById("join1").addEventListener("click", (clic) => {
 })
 
 document.getElementById("create").addEventListener("click", async (click) => {
+    if (isWaitingForGame) {return;}
+    isWaitingForGame = true;
     let resp = await fetch(url + "/api/makenewgame")
     let data = await resp.json();
     if (data.result === "-1"){
@@ -400,6 +401,8 @@ document.getElementById("create").addEventListener("click", async (click) => {
     main().catch(console.log);
 });
 document.getElementById("join2").addEventListener("click", (cl) => {
+    if (isWaitingForGame) {return;}
+    isWaitingForGame = true;
     gameID = document.getElementById("id").value;
     document.getElementById("create").style.display = "none";
     document.getElementById("id").style.display = "none";

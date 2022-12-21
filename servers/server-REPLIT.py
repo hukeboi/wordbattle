@@ -2,13 +2,12 @@
 import time
 import secrets
 import random
-#from flask_cors import CORS, cross_origin
 from waitress import serve
+from uralicNLP import uralicApi
 
 app = Flask('')
 
-#cors = CORS(app, resources={r"/api/*": {"origins": "*.wordbattle.tk"}})
-#app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 @app.route('/')
 def main():
@@ -16,11 +15,16 @@ def main():
 
 
 #CONFIG
+
+#IMPORTANT!!! MAKE SURE TO CHANGE THIS TO FALSE AFTER RUNNING THE SERVER FIRST TIME!!!!!!!!
+#OR IT WILL DOWNLOAD WORD DATA EVERYTIME U START SERVER
+FIRST_TIME_RUNNING = True
+
 #max games the server will host
-maxGames = 5
+MAX_GAMES = 5
 #password needed to retrieve all games from the server.
 #make a get request to '/api/admin/getallgames' with the 'admin' header set as the password
-adminPassword = "1234"
+ADMIN_PASSWORD = "1234"
 #different letter weights
 weights = (
     22,  #A
@@ -73,6 +77,20 @@ def IsValidWord(map, word, wordData):
     return True
 
 
+def IsRealWord(word):
+  test = uralicApi.lemmatize(word, "fin", word_boundaries=True)
+  if test == []:
+    return False
+  with open('allwords.txt') as f:
+    line = next((l for l in f if test[0] in l), None)
+  if line == None:
+    return False
+  else:
+    return True
+
+
+if FIRST_TIME_RUNNING:
+    uralicApi.download("fin")
 
 #DONT MODIFY THESE
 allData = {
@@ -81,9 +99,10 @@ allData = {
 #DONT MODIFY THESE
 allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ"
 
+
 @app.route('/api/makenewgame', methods=['GET'])
 def makenewgame():
-    if len(allData) > maxGames: return jsonify({"result" : "-1", "error":"The server is currently at full capacity"})
+    if len(allData) > MAX_GAMES: return jsonify({"result" : "-1", "error":"The server is currently at full capacity"})
     newGameId = str(secrets.token_hex(2))
     allData[newGameId] = {
         "playersInServer": 0,
@@ -143,15 +162,22 @@ def postword():
     if (request.headers['player'] != str(data["currentTurn"])):
         return jsonify({"result":"-1", "error":"An internal error occured"})
     if request.headers['player'] == "1" and request.headers['secret'] == data["playerSecrets"][0]:
+        if IsValidWord(data["map"], data["currentWord"], data["currentWordData"]) == False: return jsonify({"result":"-1", "error": "invalid word"}) 
+        if IsRealWord(request.json['word']) == False:
+            data["currentWord"] = ""
+            data["currentWordData"] = []
+            return jsonify({"result":"0", "message": "Not a real word!"})
         data["currentWord"] = request.json['word']
         data["currentWordData"] = request.json['worddata']
-        if IsValidWord(data["map"], data["currentWord"], data["currentWordData"]) == False: return jsonify({"result":"-1", "error": "invalid word"}) 
-        data["currentTurn"] = 2
         return jsonify({"result":"0"})
     elif request.headers['player'] == "2" and request.headers['secret'] == data["playerSecrets"][1]:
+        if IsValidWord(data["map"], data["currentWord"], data["currentWordData"]) == False: return jsonify({"result":"-1", "error": "invalid word"}) 
+        if IsRealWord(request.json['word']) == False:
+            data["currentWord"] = ""
+            data["currentWordData"] = []
+            return jsonify({"result":"0", "message": "Not a real word!"})
         data["currentWord"] = request.json['word']
         data["currentWordData"] = request.json['worddata']
-        if IsValidWord(data["map"], data["currentWord"], data["currentWordData"]) == False: return jsonify({"result":"-1", "error": "invalid word"}) 
         data["currentTurn"] = 1
         return jsonify({"result":"0"})
     else:
@@ -193,7 +219,7 @@ def quit():
 
 @app.route('/api/admin/getallgames', methods=['GET'])
 def getallgames():
-    if request.headers['admin'] == adminPassword:
+    if request.headers['admin'] == ADMIN_PASSWORD:
         return jsonify({"result":"0", "games":allData})
     else:
         return jsonify({"result":"-1", "error":"unauthorized"})
@@ -206,6 +232,6 @@ def add_header(response):
 
 def run():
     print("SERVER STARTED")
-    serve(app, host="0.0.0.0", port=8080, threads=maxGames + 1)
+    serve(app, host="0.0.0.0", port=8080, threads=MAX_GAMES + 1)
 
 run()
