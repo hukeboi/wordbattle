@@ -126,7 +126,22 @@ def breakVocals(map):
             if map[y][x][0] not in vocals:
                 if (map[SafeAddHeight(y, -1)][x][0] not in consonants and map[SafeAddHeight(y, 1)][x][0] not in consonants) or (map[y][SafeAddWidth(y, -1)][0] not in consonants and map[y][SafeAddWidth(y, 1)][0] not in consonants):
                     map[y][x] = random.choices(consonants, weights=consonantWeights)
-
+def RemoveSameTiles(map):
+    for x in range(0, width, 1):
+        for y in range(0, height, 1):
+            if map[y][SafeAddWidth(x, 1)][0] == map[y][x][0] and map[y][SafeAddWidth(x, -1)][0] == map[y][x][0]:
+                if map[y][x][0] in consonants:
+                    print("ok")
+                    map[y][x] = random.choices(vocals, weights=vocalWeights)
+                else:
+                    print("nope")
+                    map[y][x] = random.choices(consonants, weights=consonantWeights)
+            elif map[SafeAddHeight(y, 1)][x][0] == map[y][x][0] and map[SafeAddHeight(y, -1)][x][0] == map[y][x][0]:
+                if map[y][x][0] in consonants:
+                    map[y][x] = random.choices(vocals, weights=vocalWeights)
+                else:
+                    map[y][x] = random.choices(consonants, weights=consonantWeights)
+    return map
     return map
 def IsValidWord(map, word, wordData):
     if len(word) != len(wordData): 
@@ -236,7 +251,8 @@ def getGameData():
         newMap = GenerateMap()
         newMap = breakConsonants(newMap)
         newMap = breakVocals(newMap)
-        newMap = ListToDict(newMap)
+        newMap = RemoveSameTiles(newMap)
+        newMap = ListToDict(newMap) 
         data["map"] = newMap
     StartTime = time.time()
     while data["playersInServer"] != 2:

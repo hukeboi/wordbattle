@@ -113,6 +113,23 @@ def ListToDict(map):
             columnVal[str(column) + "col"] = map[row][column][0]
         new[str(row) + "row"] = columnVal
     return new
+def RemoveSameTiles(map):
+    for x in range(0, width, 1):
+        for y in range(0, height, 1):
+            if map[y][SafeAddWidth(x, 1)][0] == map[y][x][0] and map[y][SafeAddWidth(x, -1)][0] == map[y][x][0]:
+                if map[y][x][0] in consonants:
+                    map[y][x] = random.choices(vocals, weights=vocalWeights)
+                    print("yes")
+                else:
+                    print("nope")
+                    map[y][x] = random.choices(consonants, weights=consonantWeights)
+            elif map[SafeAddHeight(y, 1)][x][0] == map[y][x][0] and map[SafeAddHeight(y, -1)][x][0] == map[y][x][0]:
+                if map[y][x][0] in consonants:
+                    map[y][x] = random.choices(vocals, weights=vocalWeights)
+                else:
+                    map[y][x] = random.choices(consonants, weights=consonantWeights)
+    return map
+
 w = ParseWeights()
 vocalWeights = tuple(w[0])
 consonantWeights = tuple(w[1])
@@ -122,5 +139,8 @@ heat = CalcHeatMap(map)
 heat[0] = int(heat[0])
 heat[1] = int(heat[1])
 map[heat[1]][heat[0]][0] = "*"
-print(ListToDict(map))
+map = RemoveSameTiles(map)
+print(map[0][0])
+print(map[0][0][0])
+#print(ListToDict(map))
 print(getStringFromMap(map))
