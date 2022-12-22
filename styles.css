@@ -1,8 +1,8 @@
 ﻿.title {
     color: antiquewhite;
     text-align: center;
-    font-family: fantasy;
-    font-size: 400%;
+    font-family: arial;
+    font-size: 9vh;
 }
 
 body {
@@ -10,11 +10,11 @@ body {
 }
 
 .letter{
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-left: 0.3rem;
-    margin-right: 0.3rem;
-    margin-top: 0.6rem;
+    width: 4vh;
+    height: 4vh;
+    margin-left: 0.5vh;
+    margin-right: 0.5vh;
+    margin-top: 1vh;
     background-color: white;
     color: black;
     
@@ -27,9 +27,9 @@ body {
 }
 .letterChild{
     font-family: Arial;
-    margin-top: 0.5rem;
+    margin-top: 0.8vh;
     text-align: center;
-    font-size: 120%;
+    font-size: 2vh;
     cursor: default;
     user-select: none;
     pointer-events: none;
@@ -38,7 +38,6 @@ body {
     align-self: center;
     display: flex;
     flex-direction: column;
-    width: 31rem;
     justify-content: center;
 }
 
@@ -62,9 +61,9 @@ body {
 }
 #sendBtn{
     align-self: end;
-    margin-top: -3rem;
-    width:3rem;
-    height: 3rem;
+    margin-top: -5vh;
+    width:5vh;
+    height: 5vh;
 }
 
 .searchMatch{
