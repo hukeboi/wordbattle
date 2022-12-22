@@ -330,6 +330,7 @@ async function main(){
         document.getElementById("map").appendChild(parent);
         //document.getElementById("map").appendChild(document.getElementById("underBoard"))
     }
+    document.getElementById("map").appendChild(document.getElementById("underBoard"))
     RefreshColors();
     GameplayLoop();
 }
@@ -343,7 +344,7 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
             alert(postData.error)
             document.location.reload();
         } else if (postData.result === "1"){
-            alert("Not a word.");
+            alert("Not a word. (" + word + ")");
             IsMyTurn = true;
             document.getElementById("sendBtn").style.visibility = "visible";
             selectedTiles = [];
@@ -367,9 +368,11 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
             if (player === "1" && allTiles[i][0] === 13)
             {
                 alert("You won");
+                quitGame();
                 document.location.reload();
             } else if (player === "2" && allTiles[i][0] === 1) {
                 alert("You won");
+                quitGame();
                 document.location.reload();
             }
         }

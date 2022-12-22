@@ -10,10 +10,10 @@ import json
 
 #CONFIG
 #max games the server will host
-MAX_GAMES = 5
+MAX_GAMES = 7
 
 #max waiting slots. How many people can wait for their friend to join
-MAX_WAITING_SLOTS = 4
+MAX_WAITING_SLOTS = 5
 
 #max time to wait for opponent to join game (in seconds)
 MAX_WAIT_TIME = 30.0
@@ -33,7 +33,7 @@ weights = (
     2,   #D
     19,  #E
     1,   #F
-    4,   #G
+    2,   #G
     17,  #H
     21,  #I
     19,  #J
