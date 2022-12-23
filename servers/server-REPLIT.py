@@ -151,18 +151,20 @@ def IsValidWord(map, word, wordData):
             
     return True
 def IsRealWord(word):
-  test = uralicApi.lemmatize(word, "fin", word_boundaries=True)
-  if test == []:
-    return False
-  for i in range(0, len(test), 1):
-    with open('allwords.txt') as f:
-      line = next((l for l in f if test[i] in l), None)
-    if line != None:
-      break
-  if line == None:
-    return False
-  else:
+    test = uralicApi.lemmatize(word, "fin", word_boundaries=True)
+    if test == []:
+        return False
     return True
+    #below is old code not sure if it works without
+    for i in range(0, len(test), 1):
+        with open('allwords.txt') as f:
+            line = next((l for l in f if test[i] in l), None)
+        if line != None:
+            break
+    if line == None:
+        return False
+    else:
+        return True
 ParsedWeights = ParseWeights()
 vocalWeights = tuple(ParsedWeights[0])
 consonantWeights = tuple(ParsedWeights[1])

@@ -15,41 +15,43 @@
     </head>
     <body>
         <h1 class="title">Word Battle</h1>
-        <div id="placeholderMap">
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-            <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
-        </div>
-        <div class="searchMatch">
-            <div class="options">
-                <button height="50" id="join1" class="optBtn">
-                    Join game
-                </button><button height="50" id="create" class="optBtn">
-                    Create game
-                </button>
+        <div style="display: flex;flex-direction: column;width: 100%;">
+            <div id="placeholderMap" style="align-self: center; display: flex; justify-content: center; flex-direction: column;">
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
             </div>
-            <div id="joingame">
-                <input id="id" placeholder="game id">
-                <button width="50" height="50" id="join2">
-                    Join
-                </button>
+            <div class="searchMatch">
+                <div>
+                    <button height="50" id="join1" class="optBtn btn">
+                        Join game
+                    </button><button height="50" id="create" class="optBtn btn">
+                        Create game
+                    </button>
+                </div>
+                <div id="joingame" style="display: inherit;margin-top: 1rem;">
+                    <input id="id" placeholder="Enter a game id" style="margin-right: 1vh; margin-left: 1vh;">
+                    <button width="50" height="50" id="join2" style="margin-left: 1vh;margin-right: 1vh;" class="btn">
+                        Join
+                    </button>
+                </div>  
             </div>
-            
-            
         </div>
+        
+        
         <div id="waiting">
             <p>Waiting for other player.</p>
-            <p id="code">Your lobby code: 1234</p>
+            <p id="code">Your game id: 1234</p>
         </div>
 
         <div style="display: flex;width: 100%;justify-content: center;">
@@ -59,7 +61,7 @@
                     <div style="text-align: center; height: 50px;align-self: center;">
                         <p class="word"></p>
                     </div>
-                    <input type="image" src="icons/send.png" name="send" width="50" height="50" alt="send" id="sendBtn"/>
+                    <input type="image" src="icons/send.png" name="send" width="50" height="50" alt="send" id="sendBtn" class="btn"/>
                 </div>
             </div>        
         </div>

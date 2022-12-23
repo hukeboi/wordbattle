@@ -239,7 +239,7 @@ async function GameplayLoop(){
 
 
 async function main(){
-
+    document.getElementsByClassName("searchMatch")[0].style.display = "none";
     let ping = await fetch(url + "/api/ping").catch(function() {
         alert("Failed to connect to server")
         document.location.reload();
@@ -421,11 +421,11 @@ document.getElementById("join2").addEventListener("click", (cl) => {
     main().catch(console.log);
 })
 
-function quitGame(){
-    fetch(url + "/api/quit?id=" + gameID)
+async function quitGame(){
+    await fetch(url + "/api/quit?id=" + gameID)
 }
-window.addEventListener('beforeunload', () => {
-    quitGame();
+window.addEventListener('beforeunload', async () => {
+    await quitGame();
     return "Do you want to exit??";
 })
 

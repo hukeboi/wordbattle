@@ -3,10 +3,12 @@
     text-align: center;
     font-family: arial;
     font-size: 9vh;
+    margin-bottom: 3vh;
+    margin-top: 4vh;
 }
 
 body {
-    background-color: rgb(28, 28, 28);
+    background-color: rgb(20, 20, 20);
 }
 
 .letter{
@@ -61,54 +63,17 @@ body {
 }
 #sendBtn{
     align-self: end;
-    margin-top: -5vh;
-    width:5vh;
-    height: 5vh;
+    margin-top: -4vh;
+    width: 4vh;
+    height: 4vh;
+    padding: 0;
 }
 
 .searchMatch{
-    position: absolute;
-    width: 100%;
-    left: 0;
+    display: flex;
+    justify-content: center;
 }
-#join2{
-    position: relative;
-    margin-left: 1rem;
-    transform: translateX(-50%);
-    margin-top: 20px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    left: 50%;
-}
-#id{
-    padding-top: 4px;
-    padding-bottom: 4px;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 20px;
-    font-family: 'Courier New';
-    background:rgb(95, 95, 95);
-    border: none; 
-    border-width: 0; 
-    box-shadow: none;
-    width: 250px;
-    width: 5%;
-}
-#url{
-    padding-top: 4px;
-    padding-bottom: 4px;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 20px;
-    font-family: 'Courier New';
-    background:rgb(95, 95, 95);
-    border: none; 
-    border-width: 0; 
-    box-shadow: none;
-    width: 200px;
-}
+
 input:focus, textarea:focus, select:focus{
     outline: none;
 }
@@ -125,15 +90,32 @@ input:focus, textarea:focus, select:focus{
     font-family: arial;
 }
 
-.options{
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    
-}
 .optBtn{
-    width: 7rem;
+    width: 11rem;
     margin-top: 1rem;
     margin-left: 1rem;
     margin-right: 1rem;
+}
+.btn {
+    color: #ffffff;
+    background-color: #3f3f3f;
+    font-size: 19px;
+    border: 3px solid #3f3f3f;
+    border-radius: 18px;
+    padding: 10px 30px;
+    cursor: pointer
+}
+.btn:hover {
+    color: #1f1f1f;
+    background-color: #b5b5b5;
+}
+
+input {
+    color: #4d4d4d;
+    background-color: #b5b5b5;
+    font-size: 19px;
+    border: 3px solid #3f3f3f;
+    border-radius: 18px;
+    padding: 10px 10px;
+    cursor: pointer
 }
