@@ -245,7 +245,7 @@ async function main(){
         document.location.reload();
     });
 
-    
+    document.getElementsByClassName("alert")[0].style.display = "none";
     const startData = await fetchAsync(url + "/api/getserverstatus")
     if (startData.result === "-1") {
         alert(startData.error)
@@ -396,6 +396,7 @@ document.getElementById("join1").addEventListener("click", (clic) => {
 
 document.getElementById("create").addEventListener("click", async (click) => {
     if (isWaitingForGame) {return;}
+    document.getElementsByClassName("alert")[0].style.display = "inherit";
     isWaitingForGame = true;
     let resp = await fetch(url + "/api/makenewgame")
     let data = await resp.json();
