@@ -1,1 +1,2 @@
-﻿Sitemap: https://wordbattle.tk/sitemap.xml
+﻿User-agent: *
+Allow: /
