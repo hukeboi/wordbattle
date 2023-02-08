@@ -243,7 +243,6 @@ async function main(){
         document.location.reload();
     });
 
-    document.getElementsByClassName("alert")[0].style.display = "none";
     const startData = await fetchAsync(url + "/api/getserverstatus")
     if (startData.result === "-1") {
         alert(startData.error)
