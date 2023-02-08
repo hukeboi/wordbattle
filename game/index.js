@@ -1,6 +1,4 @@
 ﻿//TODO:
-// - add game id to ui so the player can share it
-// - fix weird css (scaling and positioning)
 // - fix hovering tiles its brook
 // - show the word enemy used
 
@@ -123,7 +121,7 @@ function CheckTile(tiles, tile, visited, player){
             }
         }
     }
-    if (retFalse === false){return true}
+    if (retFalse === false) {return true; }
     return false
     
 
@@ -138,7 +136,7 @@ function CheckIfValid(tiles, player){
             continue;
         }
         if (CheckTile(tiles, tiles[i], [], player) === false){
-            toRemove.push(tiles[i])
+            toRemove.push(tiles[i]);
         }
 
     }
@@ -383,7 +381,6 @@ document.getElementById("sendBtn").addEventListener("click", async (event) => {
     }
 });
 document.getElementById("id").value = "";
-document.getElementById("waiting").style.display = "none";
 
 //join
 document.getElementById("joingame").style.display = "none";

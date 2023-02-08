@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Word Battle</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="theme-color" content="#ffffff">
+        <meta name="description" content="An online 1v1 word battle game.">
+    </head>
+    <body>
+        <h1 class="title">Word Battle</h1>
+        <div style="display: flex;flex-direction: column;width: 100%;">
+            <div id="placeholderMap" style="align-self: center; display: flex; justify-content: center; flex-direction: column;">
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+                <div class="letterParent"><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div><div class="letter"></div></div>
+            </div>
+            <div class="searchMatch">
+                <div>
+                    <button height="50" id="join1" class="optBtn btn">
+                        Join game
+                    </button><button height="50" id="create" class="optBtn btn">
+                        Create game
+                    </button>
+                </div>
+                <div id="joingame" style="display: inherit;margin-top: 1rem;">
+                    <input id="id" placeholder="Enter a game id" style="margin-right: 1vh; margin-left: 1vh;">
+                    <button width="50" height="50" id="join2" style="margin-left: 1vh;margin-right: 1vh;" class="btn">
+                        Join
+                    </button>
+                </div>  
+            </div>
+        </div>
+        
+        
+        <div id="waiting">
+            <p>Waiting for other player.</p>
+            <p id="code">Your game id: 1234</p>
+        </div>
+
+        <div style="display: flex;width: 100%;justify-content: center;">
+            <div id="map">
+
+                <div class="underBoard" id="underBoard">
+                    <div style="text-align: center; height: 50px;align-self: center;">
+                        <p class="word"></p>
+                    </div>
+                    <input type="image" src="icons/send.png" name="send" width="50" height="50" alt="send" id="sendBtn" class="btn"/>
+                </div>
+            </div>        
+        </div>
+        <div class="alert">
+            <h2>Waiting for server</h2>
+            <p>Please wait for the server to start</p>
+        </div>
+        <script src="game/index.js"></script>
+    </body>
+</html>

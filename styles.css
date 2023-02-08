@@ -85,6 +85,7 @@ input:focus, textarea:focus, select:focus{
     color: white;
     text-align: center;
     font-family: arial;
+    display: none;
 }
 #code{
     font-family: arial;
@@ -133,4 +134,17 @@ input {
     top: 50%;
     transform: translate3d(-50%, -50%, 0);
     display: none;
+}
+
+
+.startPage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.txt{
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: large;
 }
