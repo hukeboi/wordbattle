@@ -265,7 +265,7 @@ async function main(){
     secret = startData.secret;
     const headers = {'secret': secret}
     document.getElementById("waiting").style.display = "inherit";
-    document.getElementById("alert").style.display = "none";
+    document.getElementsByClassName("alert")[0].style.display = "none";
     document.getElementById("code").innerText = "Your lobby code: " + gameID;
     const gameData = await fetchAsync(url + "/api/getgamedata", headers);
     if (gameData.result === "-1") {
