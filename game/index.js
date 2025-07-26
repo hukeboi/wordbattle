@@ -27,7 +27,7 @@ function compare( a, b ) {
     return 0;
 }
   
-let url = "https://word-battle-server.hugestudios.repl.co";
+let url = "http://127.0.0.1:8070";
 let selectedTiles = [];
 let allTiles = [];
 let allEnemyTiles = [];
